@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class cam : MonoBehaviour
@@ -8,12 +6,13 @@ public class cam : MonoBehaviour
     void Start()
     {
         Debug.Log("test");
+        Debug.Log("test");
 
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        Debug.Log("test");
     }
 }
