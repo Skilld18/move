@@ -2,9 +2,9 @@ using UnityEngine;
 
 public class Move : MonoBehaviour
 {
-    public static int range = 110;
+    public const int Range = 110;
 
-    private GameObject jumpTarget = null;
+    public GameObject jumpTarget;
     // Start is called before the first frame update
     // void Start()
     // {
@@ -12,28 +12,32 @@ public class Move : MonoBehaviour
     // }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        var camera = GameObject.FindGameObjectWithTag("MainCamera");
-        transform.LookAt(camera.transform.position);
+        var mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
+        transform.LookAt(mainCamera.transform.position);
         var islands = GameObject.FindGameObjectsWithTag("island");
-        float x = Input.GetAxis("Horizontal");
-        float z = Input.GetAxis("Vertical");
-        float angle = 360f;
-        var controls = transform.right * -x + transform.up * -z;
+        var x = Input.GetAxis("Horizontal");
+        var z = Input.GetAxis("Vertical");
+        var angle = 360f;
+        var local = transform;
+        var right = local.right;
+        var up = local.up;
+        var controls = right * -x + up * -z;
         controls.Normalize();
         var targetIsland = islands[0];
         foreach (var island in islands)
         {
-            float dist = Vector3.Distance(island.transform.position, transform.position);
-            var dir = island.transform.position - transform.position;
+            var dist = Vector3.Distance(island.transform.position, transform.position);
+            var islandTransform = island.transform;
+            var dir = islandTransform.position - local.position;
             dir.Normalize();
             if (island == jumpTarget)
             {
                 continue;
             }
             targetIsland.GetComponent<Renderer> ().material.color = Color.blue;
-            if (dist <= range)
+            if (dist <= Range)
             {
                 island.GetComponent<Renderer> ().material.color = Color.green;
                 Debug.DrawLine(transform.position, island.transform.position);

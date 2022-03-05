@@ -1,8 +1,5 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
- 
+
 public class CameraMove : MonoBehaviour
 {
  
@@ -11,42 +8,26 @@ public class CameraMove : MonoBehaviour
  
     public Transform lookAt;
  
-    public Transform Player;
- 
     public float distance = 10.0f;
-    private float currentX = 0.0f;
-    private float currentY = 0.0f;
-    public float sensivity = 400.0f;
+    private float _currentX;
+    private float _currentY;
+    public float sensitivity = 400.0f;
 
-
-    private float x = 0f;
-    private float z = 0f;
-    // Start is called before the first frame update
-    void Start()
-    {
-     
- 
-    }
-
-    private void Update()
-    {
-    }
 
     // Update is called once per frame
-    void LateUpdate()
+    private void LateUpdate()
     {
  
-        currentX += Input.GetAxis("Mouse X") * sensivity * Time.deltaTime;
-        currentY += Input.GetAxis("Mouse Y") * sensivity * Time.deltaTime;
+        _currentX += Input.GetAxis("Mouse X") * sensitivity * Time.deltaTime;
+        _currentY += Input.GetAxis("Mouse Y") * sensitivity * Time.deltaTime;
  
-        currentY = Mathf.Clamp(currentY, YMin, YMax);
+        _currentY = Mathf.Clamp(_currentY, YMin, YMax);
  
-        Vector3 Direction = new Vector3(0, 0, -distance);
-        Quaternion rotation = Quaternion.Euler(currentY, currentX, 0);
-        transform.position = lookAt.position + rotation * Direction;
+        var direction = new Vector3(0, 0, -distance);
+        var rotation = Quaternion.Euler(_currentY, _currentX, 0);
+        var position = lookAt.position;
+        transform.position = position + rotation * direction;
  
-        transform.LookAt(lookAt.position);
-
-
+        transform.LookAt(position);
     }
 }

@@ -9,11 +9,11 @@ public class Island : MonoBehaviour
     // }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
         var player = GameObject.FindGameObjectWithTag("Player");
-        float dist = Vector3.Distance(player.transform.position, transform.position);
-        if (dist > Move.range)
+        var dist = Vector3.Distance(player.transform.position, transform.position);
+        if (dist > Move.Range)
         {
             GetComponent<Renderer> ().material.color = Color.red;
         }
