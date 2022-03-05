@@ -1,15 +1,13 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Move : MonoBehaviour
 {
-    public static int range = 300;
+    public static int range = 50;
     // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    // void Start()
+    // {
+    //     
+    // }
 
     // Update is called once per frame
     void Update()
@@ -18,7 +16,12 @@ public class Move : MonoBehaviour
         var islands = GameObject.FindGameObjectsWithTag("island");
         foreach (var island in islands)
         {
-            island.GetComponent<Renderer> ().material.color = Color.green;
+            float dist = Vector3.Distance(island.transform.position, transform.position);
+            if (dist <= range)
+            {
+                island.GetComponent<Renderer> ().material.color = Color.green;
+                Debug.DrawLine(transform.position, island.transform.position);
+            }
             
         }
     }
