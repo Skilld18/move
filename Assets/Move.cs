@@ -18,23 +18,26 @@ public class Move : MonoBehaviour
         var islands = GameObject.FindGameObjectsWithTag("island");
         float x = Input.GetAxis("Horizontal");
         float z = Input.GetAxis("Vertical");
+        float angle = 360f;
         var controls = transform.right * -x + transform.up * -z;
-        Debug.DrawRay(transform.position, transform.right * -x + transform.up * -z, Color.green);
+        controls.Normalize();
+        var targetIsland = islands[0];
         foreach (var island in islands)
         {
             float dist = Vector3.Distance(island.transform.position, transform.position);
-            // var dir = Vector3()
+            var dir = island.transform.position - transform.position;
+            dir.Normalize();
             if (dist <= range)
             {
                 island.GetComponent<Renderer> ().material.color = Color.green;
                 Debug.DrawLine(transform.position, island.transform.position);
+                if (Vector3.Angle(dir, controls) < angle)
+                {
+                    angle = Vector3.Angle(dir, controls);
+                    targetIsland = island;
+                }
             }
-            
         }
-
-        
-
-
-
+        Debug.DrawLine(transform.position, targetIsland.transform.position, Color.cyan);
     }
 }
