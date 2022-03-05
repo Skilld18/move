@@ -8,7 +8,7 @@ public class Cam : MonoBehaviour
     public int scale = 1000; 
     private void Start()
     {
-        //ProgGen();
+        ProgGen();
     }
 
     private void ProgGen()
