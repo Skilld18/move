@@ -331,7 +331,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   lookAt: {fileID: 1360935073}
-  Player: {fileID: 1360935073}
+  Player: {fileID: 0}
   distance: 10
   sensivity: 400
 --- !u!1 &1360935069

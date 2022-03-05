@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -16,15 +17,21 @@ public class CameraMove : MonoBehaviour
     private float currentX = 0.0f;
     private float currentY = 0.0f;
     public float sensivity = 400.0f;
- 
- 
+
+
+    private float x = 0f;
+    private float z = 0f;
     // Start is called before the first frame update
     void Start()
     {
      
  
     }
- 
+
+    private void Update()
+    {
+    }
+
     // Update is called once per frame
     void LateUpdate()
     {
@@ -39,5 +46,7 @@ public class CameraMove : MonoBehaviour
         transform.position = lookAt.position + rotation * Direction;
  
         transform.LookAt(lookAt.position);
+
+
     }
 }
