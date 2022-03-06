@@ -9,8 +9,8 @@ public class CameraMove : MonoBehaviour
     public Transform lookAt;
  
     public float distance = 10.0f;
-    private float _currentX;
-    private float _currentY;
+    public static float _currentX;
+    public static float _currentY;
     public float sensitivity = 400.0f;
 
 
@@ -18,8 +18,8 @@ public class CameraMove : MonoBehaviour
     private void LateUpdate()
     {
  
-        _currentX += Input.GetAxis("Mouse X") * sensitivity * Time.deltaTime;
-        _currentY += Input.GetAxis("Mouse Y") * sensitivity * Time.deltaTime;
+        // _currentX += Input.GetAxis("Mouse X") * sensitivity * Time.deltaTime;
+        // _currentY += Input.GetAxis("Mouse Y") * sensitivity * Time.deltaTime;
  
         _currentY = Mathf.Clamp(_currentY, YMin, YMax);
  

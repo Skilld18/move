@@ -1,15 +1,22 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class Move : MonoBehaviour
 {
     public const int Range = 70;
 
     public GameObject jumpTarget;
-    // Start is called before the first frame update
-    // void Start()
-    // {
-    //     
-    // }
+    public InputAction fireAction;
+    public InputAction lookAction;
+    public InputAction moveAction;
+
+    public InputActionMap gameplayActions;
+    void Start()
+    {
+        fireAction.Enable();
+        lookAction.Enable();
+        moveAction.Enable();
+    }
 
     // Update is called once per frame
     private void Update()
@@ -17,13 +24,15 @@ public class Move : MonoBehaviour
         var mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
         transform.LookAt(mainCamera.transform.position);
         var islands = GameObject.FindGameObjectsWithTag("island");
-        var x = Input.GetAxis("Horizontal");
-        var z = Input.GetAxis("Vertical");
+        // var x = Input.GetAxis("Horizontal");
+        // var z = Input.GetAxis("Vertical");
         var angle = 360f;
         var local = transform;
         var right = local.right;
         var up = local.up;
-        var controls = right * -x + up * -z;
+        var controls = -right * moveAction.ReadValue<Vector2>().x + up * moveAction.ReadValue<Vector2>().y;
+        Debug.Log(controls);
+        
         
         Debug.DrawRay(local.position, controls, Color.red);
         controls.Normalize();
@@ -55,7 +64,7 @@ public class Move : MonoBehaviour
         Debug.DrawLine(transform.position, targetIsland.transform.position, Color.cyan);
         targetIsland.GetComponent<Renderer> ().material.color = Color.magenta;
         
-        if (Input.GetKeyDown("joystick button 0"))
+        if (fireAction.triggered)
         {
             jumpTarget = targetIsland;
         }
@@ -68,5 +77,8 @@ public class Move : MonoBehaviour
                 jumpTarget.GetComponent<Renderer> ().material.color = Color.white;
             }
         }
+
+        CameraMove._currentX += lookAction.ReadValue<Vector2>().x * Time.deltaTime * 400f;
+        CameraMove._currentY += -lookAction.ReadValue<Vector2>().y * Time.deltaTime * 400f;
     }
 }
