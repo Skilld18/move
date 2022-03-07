@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class Move : MonoBehaviour
 {
@@ -7,13 +8,15 @@ public class Move : MonoBehaviour
 
     public GameObject jumpTarget;
     public InputActionAsset input;
-    public bool zenMode = false;
-    public bool waitTilLand = true;
     private bool canJump = true;
     public float epsilon = 10f;
     public static InputAction fireAction;
     public static InputAction lookAction;
     public static InputAction moveAction;
+    
+
+    public Toggle zenMode;
+    public Toggle waitTilLand;
 
     public InputActionMap gameplayActions;
     void Start()
@@ -37,7 +40,6 @@ public class Move : MonoBehaviour
         var right = local.right;
         var up = local.up;
         var controls = -right * moveAction.ReadValue<Vector2>().x + up * moveAction.ReadValue<Vector2>().y;
-        Debug.Log(controls);
         
         Debug.DrawRay(local.position, controls, Color.red);
         controls.Normalize();
@@ -54,7 +56,7 @@ public class Move : MonoBehaviour
                 continue;
             }
 
-            if (!Utils.canCameraSee(island) && !zenMode)
+            if (!Utils.canCameraSee(island) && !zenMode.GetComponent<Toggle>().isOn)
             {
                 continue;
             }
@@ -80,7 +82,7 @@ public class Move : MonoBehaviour
             {
                 if (Utils.inRange(island) && island != targetIsland)
                 {
-                    if (Utils.canCameraSee(island) && !zenMode)
+                    if (Utils.canCameraSee(island) && !zenMode.GetComponent<Toggle>().isOn)
                     {
                         Debug.DrawLine(transform.position, island.transform.position, Color.yellow);
                         island.GetComponent<Renderer>().material.color = Color.yellow;
@@ -98,7 +100,7 @@ public class Move : MonoBehaviour
         }
 
         
-        if (fireAction.triggered && foundTargets && (canJump || !waitTilLand))
+        if (fireAction.triggered && foundTargets && (canJump || !waitTilLand.GetComponent<Toggle>().isOn))
         {
             jumpTarget = targetIsland;
             canJump = false;
