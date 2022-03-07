@@ -7,10 +7,13 @@ public class Move : MonoBehaviour
 
     public GameObject jumpTarget;
     public InputActionAsset input;
-    public bool ZenMode = false;
-    private InputAction fireAction;
-    private InputAction lookAction;
-    private InputAction moveAction;
+    public bool zenMode = false;
+    public bool waitTilLand = true;
+    private bool canJump = true;
+    public float epsilon = 10f;
+    public static InputAction fireAction;
+    public static InputAction lookAction;
+    public static InputAction moveAction;
 
     public InputActionMap gameplayActions;
     void Start()
@@ -24,18 +27,6 @@ public class Move : MonoBehaviour
         moveAction.Enable();
     }
 
-    bool canCameraSee(GameObject o)
-    {
-        if (ZenMode)
-        {
-            return true;
-        }
-        var mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
-        Plane[] planes = GeometryUtility.CalculateFrustumPlanes(mainCamera.GetComponent<Camera>());
-        return GeometryUtility.TestPlanesAABB(planes, o.GetComponent<Collider>().bounds);
-    }
-
-    // Update is called once per frame
     private void Update()
     {
         var mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
@@ -48,14 +39,12 @@ public class Move : MonoBehaviour
         var controls = -right * moveAction.ReadValue<Vector2>().x + up * moveAction.ReadValue<Vector2>().y;
         Debug.Log(controls);
         
-        
         Debug.DrawRay(local.position, controls, Color.red);
         controls.Normalize();
         var targetIsland = islands[0];
         bool foundTargets = false;
         foreach (var island in islands)
         {
-            var dist = Vector3.Distance(island.transform.position, transform.position);
             var islandTransform = island.transform;
             var dir = islandTransform.position - local.position;
             dir = Vector3.ProjectOnPlane(dir, local.forward);
@@ -65,11 +54,11 @@ public class Move : MonoBehaviour
                 continue;
             }
 
-            if (!canCameraSee(island))
+            if (!Utils.canCameraSee(island) && !zenMode)
             {
                 continue;
             }
-            if (dist <= Range)
+            if (Utils.inRange(island))
             {
                 foundTargets = true;
                 if (Vector3.Angle(dir, controls) < angle)
@@ -89,10 +78,9 @@ public class Move : MonoBehaviour
         {
             if (island != targetIsland)
             {
-                var dist = Vector3.Distance(island.transform.position, transform.position);
-                if (dist <= Range && island != targetIsland)
+                if (Utils.inRange(island) && island != targetIsland)
                 {
-                    if (canCameraSee(island))
+                    if (Utils.canCameraSee(island) && !zenMode)
                     {
                         Debug.DrawLine(transform.position, island.transform.position, Color.yellow);
                         island.GetComponent<Renderer>().material.color = Color.yellow;
@@ -110,17 +98,19 @@ public class Move : MonoBehaviour
         }
 
         
-        if (fireAction.triggered && foundTargets)
+        if (fireAction.triggered && foundTargets && (canJump || !waitTilLand))
         {
             jumpTarget = targetIsland;
+            canJump = false;
         }
 
         if (jumpTarget)
         {
             transform.position = Vector3.MoveTowards(transform.position, jumpTarget.transform.position, Time.deltaTime * 100);
-            if (Vector3.Distance(jumpTarget.transform.position, transform.position) < 0.1f)
+            if (Vector3.Distance(jumpTarget.transform.position, transform.position) < epsilon)
             {
                 jumpTarget.GetComponent<Renderer> ().material.color = Color.green;
+                canJump = true;
             }
         }
 

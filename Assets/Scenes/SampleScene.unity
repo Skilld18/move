@@ -622,7 +622,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   jumpTarget: {fileID: 0}
   input: {fileID: -944628639613478452, guid: 2ea4fb57effe5bf45966d71c218fc456, type: 3}
-  ZenMode: 0
+  zenMode: 0
+  waitTilLand: 1
+  epsilon: 10
   gameplayActions:
     m_Name: Gameplay Actions
     m_Id: 6a3b0515-84da-43dc-bde7-7787445e6401
