@@ -7,9 +7,10 @@ public class Move : MonoBehaviour
 
     public GameObject jumpTarget;
     public InputActionAsset input;
-    public InputAction fireAction;
-    public InputAction lookAction;
-    public InputAction moveAction;
+    public bool ZenMode = false;
+    private InputAction fireAction;
+    private InputAction lookAction;
+    private InputAction moveAction;
 
     public InputActionMap gameplayActions;
     void Start()
@@ -25,6 +26,10 @@ public class Move : MonoBehaviour
 
     bool canCameraSee(GameObject o)
     {
+        if (ZenMode)
+        {
+            return true;
+        }
         var mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
         Plane[] planes = GeometryUtility.CalculateFrustumPlanes(mainCamera.GetComponent<Camera>());
         return GeometryUtility.TestPlanesAABB(planes, o.GetComponent<Collider>().bounds);
