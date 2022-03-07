@@ -621,6 +621,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   jumpTarget: {fileID: 0}
+  input: {fileID: -944628639613478452, guid: 2ea4fb57effe5bf45966d71c218fc456, type: 3}
   fireAction:
     m_Name: Fire
     m_Type: 0
@@ -628,15 +629,7 @@ MonoBehaviour:
     m_Id: c51a1b84-68f1-4ca0-968e-8bb719309f2d
     m_Processors: 
     m_Interactions: 
-    m_SingletonActionBindings:
-    - m_Name: 
-      m_Id: 8450cb09-da23-4332-bd76-aef0f360edd6
-      m_Path: <Gamepad>/buttonSouth
-      m_Interactions: 
-      m_Processors: 
-      m_Groups: 
-      m_Action: Fire
-      m_Flags: 0
+    m_SingletonActionBindings: []
     m_Flags: 0
   lookAction:
     m_Name: Look
@@ -645,15 +638,7 @@ MonoBehaviour:
     m_Id: 047f8337-85f6-4cb7-a0d1-3ad6e8340fd8
     m_Processors: 
     m_Interactions: 
-    m_SingletonActionBindings:
-    - m_Name: 
-      m_Id: 40a4f685-1dcd-496f-ae69-2dbe1d5fa705
-      m_Path: <Gamepad>/rightStick
-      m_Interactions: 
-      m_Processors: 
-      m_Groups: 
-      m_Action: Look
-      m_Flags: 0
+    m_SingletonActionBindings: []
     m_Flags: 0
   moveAction:
     m_Name: Move
@@ -662,19 +647,19 @@ MonoBehaviour:
     m_Id: 0148b7a3-837e-49f9-946c-ca01a6ca066e
     m_Processors: 
     m_Interactions: 
-    m_SingletonActionBindings:
-    - m_Name: 
-      m_Id: b04ad358-2b07-4727-8b35-83af8a62b846
-      m_Path: <Gamepad>/leftStick
-      m_Interactions: 
-      m_Processors: 
-      m_Groups: 
-      m_Action: Move
-      m_Flags: 0
+    m_SingletonActionBindings: []
     m_Flags: 0
   gameplayActions:
     m_Name: Gameplay Actions
     m_Id: 6a3b0515-84da-43dc-bde7-7787445e6401
     m_Asset: {fileID: 0}
-    m_Actions: []
+    m_Actions:
+    - m_Name: New action
+      m_Type: 1
+      m_ExpectedControlType: Button
+      m_Id: 6d632d0b-350c-45de-98bd-198c1d7f524e
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
     m_Bindings: []

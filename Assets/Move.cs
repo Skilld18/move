@@ -6,6 +6,7 @@ public class Move : MonoBehaviour
     public const int Range = 70;
 
     public GameObject jumpTarget;
+    public InputActionAsset input;
     public InputAction fireAction;
     public InputAction lookAction;
     public InputAction moveAction;
@@ -13,6 +14,10 @@ public class Move : MonoBehaviour
     public InputActionMap gameplayActions;
     void Start()
     {
+        input.Enable();
+        fireAction = input.FindAction("Player/Fire");
+        lookAction = input.FindAction("Player/Look");
+        moveAction = input.FindAction("Player/Move");
         fireAction.Enable();
         lookAction.Enable();
         moveAction.Enable();
