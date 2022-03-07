@@ -23,14 +23,19 @@ public class Move : MonoBehaviour
         moveAction.Enable();
     }
 
+    bool canCameraSee(GameObject o)
+    {
+        var mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
+        Plane[] planes = GeometryUtility.CalculateFrustumPlanes(mainCamera.GetComponent<Camera>());
+        return GeometryUtility.TestPlanesAABB(planes, o.GetComponent<Collider>().bounds);
+    }
+
     // Update is called once per frame
     private void Update()
     {
         var mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
         transform.LookAt(mainCamera.transform.position);
         var islands = GameObject.FindGameObjectsWithTag("island");
-        // var x = Input.GetAxis("Horizontal");
-        // var z = Input.GetAxis("Vertical");
         var angle = 360f;
         var local = transform;
         var right = local.right;
@@ -42,6 +47,7 @@ public class Move : MonoBehaviour
         Debug.DrawRay(local.position, controls, Color.red);
         controls.Normalize();
         var targetIsland = islands[0];
+        bool foundTargets = false;
         foreach (var island in islands)
         {
             var dist = Vector3.Distance(island.transform.position, transform.position);
@@ -53,23 +59,53 @@ public class Move : MonoBehaviour
             {
                 continue;
             }
-            targetIsland.GetComponent<Renderer> ().material.color = Color.blue;
+
+            if (!canCameraSee(island))
+            {
+                continue;
+            }
             if (dist <= Range)
             {
-                Debug.DrawLine(transform.position, island.transform.position);
+                foundTargets = true;
                 if (Vector3.Angle(dir, controls) < angle)
                 {
                     angle = Vector3.Angle(dir, controls);
                     targetIsland = island;
-
                 }
-                island.GetComponent<Renderer> ().material.color = Color.green;
             }
         }
-        Debug.DrawLine(transform.position, targetIsland.transform.position, Color.cyan);
-        targetIsland.GetComponent<Renderer> ().material.color = Color.magenta;
+        if (foundTargets)
+        {
+            Debug.DrawLine(transform.position, targetIsland.transform.position, Color.green);
+            targetIsland.GetComponent<Renderer> ().material.color = Color.green;
+        }
+
+        foreach (var island in islands)
+        {
+            if (island != targetIsland)
+            {
+                var dist = Vector3.Distance(island.transform.position, transform.position);
+                if (dist <= Range && island != targetIsland)
+                {
+                    if (canCameraSee(island))
+                    {
+                        Debug.DrawLine(transform.position, island.transform.position, Color.yellow);
+                        island.GetComponent<Renderer>().material.color = Color.yellow;
+                    }
+                    else
+                    {
+                        Debug.DrawLine(transform.position, island.transform.position, Color.red);
+                    }
+                }
+                else
+                {
+                    island.GetComponent<Renderer>().material.color = Color.red;
+                }
+            }
+        }
+
         
-        if (fireAction.triggered)
+        if (fireAction.triggered && foundTargets)
         {
             jumpTarget = targetIsland;
         }
@@ -79,7 +115,7 @@ public class Move : MonoBehaviour
             transform.position = Vector3.MoveTowards(transform.position, jumpTarget.transform.position, Time.deltaTime * 100);
             if (Vector3.Distance(jumpTarget.transform.position, transform.position) < 0.1f)
             {
-                jumpTarget.GetComponent<Renderer> ().material.color = Color.white;
+                jumpTarget.GetComponent<Renderer> ().material.color = Color.green;
             }
         }
 
