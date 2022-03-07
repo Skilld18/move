@@ -82,14 +82,17 @@ public class Move : MonoBehaviour
             {
                 if (Utils.inRange(island) && island != targetIsland)
                 {
-                    if (Utils.canCameraSee(island) && !zenMode.GetComponent<Toggle>().isOn)
+                    if (Utils.canCameraSee(island))
                     {
-                        Debug.DrawLine(transform.position, island.transform.position, Color.yellow);
                         island.GetComponent<Renderer>().material.color = Color.yellow;
+                        Debug.DrawLine(transform.position, island.transform.position, Color.yellow);
                     }
                     else
                     {
-                        Debug.DrawLine(transform.position, island.transform.position, Color.red);
+                        if (zenMode.GetComponent<Toggle>().isOn)
+                        {
+                            Debug.DrawLine(transform.position, island.transform.position, Color.red);
+                        }
                     }
                 }
                 else
