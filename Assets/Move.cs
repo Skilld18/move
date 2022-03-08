@@ -41,7 +41,7 @@ public class Move : MonoBehaviour
         var up = local.up;
         var controls = -right * moveAction.ReadValue<Vector2>().x + up * moveAction.ReadValue<Vector2>().y;
         
-        Debug.DrawRay(local.position, controls, Color.red);
+        // Utils.DrawLine(local.position, local.position + (controls * 2), Color.red);
         controls.Normalize();
         var targetIsland = islands[0];
         bool foundTargets = false;
@@ -72,7 +72,7 @@ public class Move : MonoBehaviour
         }
         if (foundTargets)
         {
-            Debug.DrawLine(transform.position, targetIsland.transform.position, Color.green);
+            Utils.DrawLine(transform.position, targetIsland.transform.position, Color.green);
             targetIsland.GetComponent<Renderer> ().material.color = Color.green;
         }
 
@@ -85,13 +85,13 @@ public class Move : MonoBehaviour
                     if (Utils.canCameraSee(island))
                     {
                         island.GetComponent<Renderer>().material.color = Color.yellow;
-                        Debug.DrawLine(transform.position, island.transform.position, Color.yellow);
+                        Utils.DrawLine(local.position, island.transform.position, Color.yellow);
                     }
                     else
                     {
                         if (zenMode.GetComponent<Toggle>().isOn)
                         {
-                            Debug.DrawLine(transform.position, island.transform.position, Color.red);
+                            Utils.DrawLine(local.position, island.transform.position, Color.red);
                         }
                     }
                 }
