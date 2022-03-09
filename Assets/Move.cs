@@ -6,10 +6,14 @@ public class Move : MonoBehaviour
 {
     public const int Range = 70;
 
-    public GameObject jumpTarget;
+    private GameObject jumpTarget;
+    private GameObject lastIsland;
     public InputActionAsset input;
     private bool canJump = true;
     public float epsilon = 10f;
+    
+    public static bool hitOrb = false;
+
     public static InputAction fireAction;
     public static InputAction lookAction;
     public static InputAction moveAction;
@@ -32,6 +36,19 @@ public class Move : MonoBehaviour
         moveAction.Enable();
     }
 
+    private void returnToIsland()
+    {
+        if (hitOrb)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, lastIsland.transform.position, 300 * Time.deltaTime);
+        }
+
+        if (lastIsland && Vector3.Distance(lastIsland.transform.position, transform.position) < 0.1f)
+        {
+            hitOrb = false;
+        }
+    }
+
     private void Update()
     {
         var mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
@@ -44,6 +61,11 @@ public class Move : MonoBehaviour
         var controls = -right * moveAction.ReadValue<Vector2>().x + up * moveAction.ReadValue<Vector2>().y;
         
         // Utils.DrawLine(local.position, local.position + (controls * 2), Color.red);
+        returnToIsland();
+        if (hitOrb)
+        {
+            return;
+        }
         controls.Normalize();
         var targetIsland = islands[0];
         bool foundTargets = false;
@@ -80,7 +102,7 @@ public class Move : MonoBehaviour
 
         foreach (var island in islands)
         {
-            if (island != targetIsland && island.name == "Orb(Clone)")
+            if (island != targetIsland && (island.name == "Orb(Clone)" || (island.name == "Door(Clone)")))
             {
                 Utils.DrawLine(local.position, island.transform.position, Color.cyan);
                 continue;
@@ -121,6 +143,10 @@ public class Move : MonoBehaviour
             transform.position = Vector3.MoveTowards(transform.position, jumpTarget.transform.position, Time.deltaTime * 100);
             if (Vector3.Distance(jumpTarget.transform.position, transform.position) < epsilon)
             {
+                if (jumpTarget.name == "island(Clone)")
+                {
+                    lastIsland = jumpTarget;
+                }
                 jumpTarget.GetComponent<Renderer> ().material.color = Color.green;
                 canJump = true;
             }

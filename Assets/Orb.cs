@@ -1,13 +1,14 @@
-using System.Linq;
 using UnityEngine;
 
 public class Orb : MonoBehaviour
 {
     public static float maxSpeed = 0.3f;
-    public static float tooFar = 1000;
+    public static float tooFar = 600;
     private float howLong = 3;
     private float startTime;
     private Vector3 randomVector;
+    public GameObject door;
+
     void Update()
     {
         switch (Move.stage)
@@ -22,11 +23,14 @@ public class Orb : MonoBehaviour
                 stage2();
                 break;
             case 3:
-                stage3();
+                // stage3();
                 break;
             
         }
-        
+        if (oob())
+        {
+            transform.position = new Vector3(30, 30, 30);
+        }
     }
 
     private bool hitOrb()
@@ -40,25 +44,28 @@ public class Orb : MonoBehaviour
         if (hitOrb())
         {
             Move.stage++;
+            Move.hitOrb = true;
+            Destroy(this.gameObject);
         }
 
     }
     private void stage1()
     {
+        if (hitOrb())
+        {
             Move.stage++;
+            Move.hitOrb = true;
+            Destroy(this.gameObject);
+        }
+        transform.position += transform.forward * maxSpeed;
     }
     private void stage2()
     {
-            Move.stage++;
-    }
-    private void stage3()
-    {
         if (hitOrb())
         {
-            if (GameObject.FindGameObjectsWithTag("island").Where(x => x.name == this.name).Count() <= 1)
-            {
-                Debug.Log("The enemies' gate is down");
-            }
+            Move.stage++;
+            Move.hitOrb = true;
+            Instantiate(door, Vector3.zero, Quaternion.identity);
             Destroy(this.gameObject);
         }
         
@@ -72,17 +79,10 @@ public class Orb : MonoBehaviour
         {
             transform.position += randomVector;
         }
-        
-        if (oob())
-        {
-            transform.position = new Vector3(30, 30, 30);
-        }
     }
-
     private bool oob()
     {
         var player = GameObject.FindGameObjectWithTag("Player");
         return Vector3.Distance(player.transform.position, transform.position) > tooFar;
     }
-    
 }

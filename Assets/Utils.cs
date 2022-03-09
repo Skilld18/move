@@ -13,6 +13,10 @@ public class Utils
     {
         var player = GameObject.FindGameObjectWithTag("Player");
         var dist = Vector3.Distance(player.transform.position, o.transform.position);
+        if (o.name == "Orb(Clone)")
+        {
+            dist /= 2;
+        }
         return dist < Move.Range;
     }
     public static void DrawLine(Vector3 start, Vector3 end, Color color, float duration = 0.2f)
