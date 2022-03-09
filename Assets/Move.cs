@@ -13,6 +13,8 @@ public class Move : MonoBehaviour
     public static InputAction fireAction;
     public static InputAction lookAction;
     public static InputAction moveAction;
+
+    public static int stage = 0;
     
 
     public Toggle zenMode;
@@ -78,6 +80,11 @@ public class Move : MonoBehaviour
 
         foreach (var island in islands)
         {
+            if (island != targetIsland && island.name == "Orb(Clone)")
+            {
+                Utils.DrawLine(local.position, island.transform.position, Color.cyan);
+                continue;
+            }
             if (island != targetIsland)
             {
                 if (Utils.inRange(island) && island != targetIsland)

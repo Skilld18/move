@@ -1,5 +1,4 @@
 using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class Orb : MonoBehaviour
@@ -11,8 +10,50 @@ public class Orb : MonoBehaviour
     private Vector3 randomVector;
     void Update()
     {
+        switch (Move.stage)
+        {
+            case 0:
+                stage0();
+                break;
+            case 1:
+                stage1();
+                break;
+            case 2:
+                stage2();
+                break;
+            case 3:
+                stage3();
+                break;
+            
+        }
+        
+    }
+
+    private bool hitOrb()
+    {
         var player = GameObject.FindGameObjectWithTag("Player");
-        if (Vector3.Distance(player.transform.position, transform.position) < 1f)
+        return Vector3.Distance(player.transform.position, transform.position) < 1f;
+    }
+
+    private void stage0()
+    {
+        if (hitOrb())
+        {
+            Move.stage++;
+        }
+
+    }
+    private void stage1()
+    {
+            Move.stage++;
+    }
+    private void stage2()
+    {
+            Move.stage++;
+    }
+    private void stage3()
+    {
+        if (hitOrb())
         {
             if (GameObject.FindGameObjectsWithTag("island").Where(x => x.name == this.name).Count() <= 1)
             {
@@ -36,7 +77,6 @@ public class Orb : MonoBehaviour
         {
             transform.position = new Vector3(30, 30, 30);
         }
-        
     }
 
     private bool oob()
