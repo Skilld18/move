@@ -4,6 +4,10 @@ public class DoorScript : MonoBehaviour
 {
     private float waitTime = 15f;
     private float initTime = 0f;
+
+    private void start()
+    {
+    }
     // Update is called once per frame
     void Update()
     {

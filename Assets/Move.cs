@@ -50,7 +50,8 @@ public class Move : MonoBehaviour
             hitOrb = false;
         }
     }
-    
+
+    private int _oldStage = -1;
     private void paint()
     {
         switch (Move.stage)
@@ -67,8 +68,16 @@ public class Move : MonoBehaviour
             case 3:
                 GetComponent<MeshRenderer>().material.color = Color.white;
                 break;
-            
         }
+
+        if (_oldStage != Move.stage)
+        {
+            GetComponent<AudioSource>().clip = (AudioClip) Resources.Load(stage.ToString());
+            GetComponent<AudioSource>().loop = true;
+            GetComponent<AudioSource>().Play();
+        }
+
+        _oldStage = Move.stage;
     }
 
     private void Update()
