@@ -177,5 +177,9 @@ public class Move : MonoBehaviour
         }
         CameraMove._currentX += lookAction.ReadValue<Vector2>().x * Time.deltaTime * 400f;
         CameraMove._currentY += -lookAction.ReadValue<Vector2>().y * Time.deltaTime * 400f;
+        if (Move.stage == 3)
+        {
+            RenderSettings.skybox = (Material) Resources.Load("SkySeries Freebie/6sidedCosmicCoolCloud");
+        }
     }
 }

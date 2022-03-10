@@ -1,6 +1,6 @@
-using Unity.VisualScripting;
+using System;
 using UnityEngine;
-using Color = System.Drawing.Color;
+using Random = UnityEngine.Random;
 
 public class Orb : MonoBehaviour
 {
@@ -10,6 +10,10 @@ public class Orb : MonoBehaviour
     private float startTime;
     private Vector3 randomVector;
     public GameObject door;
+
+    private void Start()
+    {
+    }
 
     void Update()
     {
@@ -22,10 +26,13 @@ public class Orb : MonoBehaviour
             case 1:
                 stage1();
                 GetComponent<MeshRenderer>().material.color = new UnityEngine.Color(255, 0, 255, 100);
+                RenderSettings.skybox = (Material) Resources.Load("SkySeries Freebie/MegaSun");
+
                 break;
             case 2:
                 stage2();
                 GetComponent<MeshRenderer>().material.color = new UnityEngine.Color(255, 255, 255, 100);
+                RenderSettings.skybox = (Material) Resources.Load("SkySeries Freebie/PlanetaryEarth");
                 break;
             case 3:
                 // stage3();
