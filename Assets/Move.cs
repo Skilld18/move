@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class Move : MonoBehaviour
@@ -23,12 +24,14 @@ public class Move : MonoBehaviour
 
     public Toggle zenMode;
     public Toggle waitTilLand;
+    public Text victory;
 
     public InputActionMap gameplayActions;
     public static int jumpCount = 0;
     
     void Start()
     {
+        victory.enabled = false;
         input.Enable();
         fireAction = input.FindAction("Player/Fire");
         lookAction = input.FindAction("Player/Look");
@@ -80,8 +83,34 @@ public class Move : MonoBehaviour
         _oldStage = Move.stage;
     }
 
+    private float _jumpHeld = 0;
     private void Update()
     {
+        if (Move.stage == 4)
+        {
+            victory.enabled = true;
+            victory.text = "Victory!\nJumps: " + Move.jumpCount.ToString() + "\nTime: " + Time.time.ToString("F2") +
+                           "\nHold jump to restart";
+            Move.stage++;
+            return;
+        }
+        else if (Move.stage == 5)
+        {
+            if (fireAction.IsPressed())
+            {
+                if (_jumpHeld + 4f < Time.time)
+                {
+                    _oldStage = -1;
+                    Move.stage = 0;
+                    Application.LoadLevel(0);
+                }
+            }
+            else
+            {
+                _jumpHeld = Time.time;
+            }
+            
+        }
         var mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
         transform.LookAt(mainCamera.transform.position);
         var islands = GameObject.FindGameObjectsWithTag("island");

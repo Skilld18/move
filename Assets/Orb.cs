@@ -10,9 +10,6 @@ public class Orb : MonoBehaviour
     private Vector3 randomVector;
     public GameObject door;
 
-    private void Start()
-    {
-    }
 
     void Update()
     {
