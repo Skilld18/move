@@ -53,6 +53,13 @@ public class Utils
         cyl.transform.localScale = new Vector3(0.1f, 0.1f, Vector3.Distance(end, start));
         cyl.transform.position = Vector3.Lerp(start, end, 0.5f);
         cyl.tag = "line";
-        cyl.transform.rotation = Quaternion.LookRotation(end - start);
+        if (Vector3.Distance(end, start) > 0.1f)
+        {
+            cyl.transform.rotation = Quaternion.LookRotation(end - start);
+        }
+        else
+        {
+            GameObject.Destroy(cyl);
+        }
     }
 }
