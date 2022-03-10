@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Utils
@@ -20,15 +21,36 @@ public class Utils
         }
         return dist < Move.Range;
     }
+
+    public static void DestroyLines()
+    {
+        var lines = GameObject.FindGameObjectsWithTag("line");
+        for (int i = 0; i < lines.Length; i++)
+        {
+            GameObject.Destroy(lines[i]);
+        }
+    }
+
+
     public static void DrawLine(Vector3 start, Vector3 end, Color color, float duration = 0.2f)
     {
         GameObject myLine = new GameObject();
         myLine.transform.position = start;
         myLine.AddComponent<LineRenderer>();
         LineRenderer lr = myLine.GetComponent<LineRenderer>();
+        lr.endWidth = 0.01f;
+        lr.startWidth = 0.01f;
         lr.material.color = color;
         lr.SetPosition(0, start);
         lr.SetPosition(1, end);
-        GameObject.Destroy(myLine, duration);
+        myLine.tag = "line";
+        
+        
+        var cyl = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        cyl.transform.localEulerAngles = new Vector3(90, 0, 0);
+        cyl.transform.localScale = new Vector3(0.1f, 0.1f, Vector3.Distance(end, start));
+        cyl.transform.position = Vector3.Lerp(start, end, 0.5f);
+        cyl.tag = "line";
+        cyl.transform.rotation = Quaternion.LookRotation(end - start);
     }
 }

@@ -723,7 +723,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   island: {fileID: 4795891893181322896, guid: 75f981d276587c340aa0c4042d810d14, type: 3}
   numIslands: 100
-  scale: 250
   orb: {fileID: 4836793117177033336, guid: 875697469820479439accc3dc45074ab, type: 3}
   numOrbs: 3
 --- !u!114 &963194230

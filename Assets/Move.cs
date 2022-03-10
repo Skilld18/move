@@ -26,6 +26,7 @@ public class Move : MonoBehaviour
 
     public InputActionMap gameplayActions;
     public static int jumpCount = 0;
+    
     void Start()
     {
         input.Enable();
@@ -60,8 +61,8 @@ public class Move : MonoBehaviour
         var right = local.right;
         var up = local.up;
         var controls = -right * moveAction.ReadValue<Vector2>().x + up * moveAction.ReadValue<Vector2>().y;
-        
-        // Utils.DrawLine(local.position, local.position + (controls * 2), Color.red);
+
+        Utils.DestroyLines();
         returnToIsland();
         if (hitOrb)
         {
