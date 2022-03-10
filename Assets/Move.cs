@@ -6,7 +6,7 @@ public class Move : MonoBehaviour
 {
     public const int Range = 70;
 
-    private GameObject jumpTarget;
+    public static GameObject jumpTarget;
     private GameObject lastIsland;
     public InputActionAsset input;
     private bool canJump = true;

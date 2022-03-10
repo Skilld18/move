@@ -65,7 +65,9 @@ public class Orb : MonoBehaviour
         {
             Move.stage++;
             Move.hitOrb = true;
-            Instantiate(door, Vector3.zero, Quaternion.identity);
+            var pos = new Vector3(Random.value * Cam.scale, Random.value * Cam.scale,
+                Random.value * Cam.scale);
+            Instantiate(door, pos, Quaternion.identity);
             Destroy(this.gameObject);
         }
         

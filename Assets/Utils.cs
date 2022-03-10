@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class Utils
 {
+    private static float fudge = 1.2f;
     public static bool canCameraSee(GameObject o)
     {
         var mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
@@ -15,7 +16,7 @@ public class Utils
         var dist = Vector3.Distance(player.transform.position, o.transform.position);
         if (o.name == "Orb(Clone)")
         {
-            dist /= 2;
+            dist /= fudge;
         }
         return dist < Move.Range;
     }
