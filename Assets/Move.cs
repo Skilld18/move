@@ -50,6 +50,26 @@ public class Move : MonoBehaviour
             hitOrb = false;
         }
     }
+    
+    private void paint()
+    {
+        switch (Move.stage)
+        {
+            case 0:
+                GetComponent<MeshRenderer>().material.color = Color.grey;
+                break;
+            case 1:
+                GetComponent<MeshRenderer>().material.color = Color.red;
+                break;
+            case 2:
+                GetComponent<MeshRenderer>().material.color = new Color(255f, 0f,255f);
+                break;
+            case 3:
+                GetComponent<MeshRenderer>().material.color = Color.white;
+                break;
+            
+        }
+    }
 
     private void Update()
     {
@@ -64,11 +84,26 @@ public class Move : MonoBehaviour
 
         Utils.DestroyLines();
         returnToIsland();
+        paint();
         if (hitOrb)
         {
             return;
         }
         controls.Normalize();
+        if (jumpTarget)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, jumpTarget.transform.position, Time.deltaTime * 100);
+            if (Vector3.Distance(jumpTarget.transform.position, transform.position) < epsilon)
+            {
+                if (jumpTarget.name == "island(Clone)")
+                {
+                    lastIsland = jumpTarget;
+                }
+                jumpTarget.GetComponent<Renderer> ().material.color = Color.green;
+                canJump = true;
+            }
+        }
+        
         var targetIsland = islands[0];
         bool foundTargets = false;
         foreach (var island in islands)
@@ -128,7 +163,7 @@ public class Move : MonoBehaviour
                 }
                 else
                 {
-                    island.GetComponent<Renderer>().material.color = Color.red;
+                    island.GetComponent<Renderer>().material.color = Color.black;
                 }
             }
         }
@@ -140,21 +175,6 @@ public class Move : MonoBehaviour
             canJump = false;
             jumpCount++;
         }
-
-        if (jumpTarget)
-        {
-            transform.position = Vector3.MoveTowards(transform.position, jumpTarget.transform.position, Time.deltaTime * 100);
-            if (Vector3.Distance(jumpTarget.transform.position, transform.position) < epsilon)
-            {
-                if (jumpTarget.name == "island(Clone)")
-                {
-                    lastIsland = jumpTarget;
-                }
-                jumpTarget.GetComponent<Renderer> ().material.color = Color.green;
-                canJump = true;
-            }
-        }
-
         CameraMove._currentX += lookAction.ReadValue<Vector2>().x * Time.deltaTime * 400f;
         CameraMove._currentY += -lookAction.ReadValue<Vector2>().y * Time.deltaTime * 400f;
     }

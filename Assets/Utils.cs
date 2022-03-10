@@ -47,6 +47,8 @@ public class Utils
         
         
         var cyl = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        // cyl.AddComponent<MeshRenderer>();
+        cyl.GetComponent<MeshRenderer>().material.color = color;
         cyl.transform.localEulerAngles = new Vector3(90, 0, 0);
         cyl.transform.localScale = new Vector3(0.1f, 0.1f, Vector3.Distance(end, start));
         cyl.transform.position = Vector3.Lerp(start, end, 0.5f);

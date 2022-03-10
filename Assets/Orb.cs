@@ -1,4 +1,6 @@
+using Unity.VisualScripting;
 using UnityEngine;
+using Color = System.Drawing.Color;
 
 public class Orb : MonoBehaviour
 {
@@ -15,12 +17,15 @@ public class Orb : MonoBehaviour
         {
             case 0:
                 stage0();
+                GetComponent<MeshRenderer>().material.color = new UnityEngine.Color(255, 0, 0, 100);
                 break;
             case 1:
                 stage1();
+                GetComponent<MeshRenderer>().material.color = new UnityEngine.Color(255, 0, 255, 100);
                 break;
             case 2:
                 stage2();
+                GetComponent<MeshRenderer>().material.color = new UnityEngine.Color(255, 255, 255, 100);
                 break;
             case 3:
                 // stage3();

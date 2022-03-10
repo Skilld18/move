@@ -13,7 +13,7 @@ public class Island : MonoBehaviour
         var dist = Vector3.Distance(player.transform.position, transform.position);
         if (dist > Move.Range)
         {
-            GetComponent<Renderer> ().material.color = Color.red;
+            GetComponent<Renderer>().material.color = Color.black;
         }
     }
 }
