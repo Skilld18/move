@@ -3,7 +3,7 @@ using UnityEngine;
 public class Orb : MonoBehaviour
 {
     public static float maxSpeed = 0.3f;
-    public static float tooFar = 600;
+    public static float tooFar = 300;
     private float howLong = 3;
     private float startTime;
     private Vector3 randomVector;

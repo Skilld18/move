@@ -25,6 +25,7 @@ public class Move : MonoBehaviour
     public Toggle waitTilLand;
 
     public InputActionMap gameplayActions;
+    public static int jumpCount = 0;
     void Start()
     {
         input.Enable();
@@ -136,6 +137,7 @@ public class Move : MonoBehaviour
         {
             jumpTarget = targetIsland;
             canJump = false;
+            jumpCount++;
         }
 
         if (jumpTarget)

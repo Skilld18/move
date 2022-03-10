@@ -2,11 +2,8 @@ using UnityEngine;
 
 public class DoorScript : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-    }
-
+    private float waitTime = 15f;
+    private float initTime = 0f;
     // Update is called once per frame
     void Update()
     {
@@ -14,6 +11,15 @@ public class DoorScript : MonoBehaviour
         if (Vector3.Distance(transform.position, player.transform.position) < 0.1f)
         {
             print("Victory");
+            print(Time.time);
+            print(Move.jumpCount);
+        }
+
+        if (Time.time - initTime > waitTime)
+        {
+            var randomVector = new Vector3(Random.value, Random.value, Random.value) * Cam.scale;
+            transform.position = randomVector;
+            initTime = Time.time;
         }
     }
 }
