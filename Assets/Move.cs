@@ -1,3 +1,4 @@
+using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
@@ -134,8 +135,8 @@ public class Move : MonoBehaviour
                 canJump = true;
             }
         }
-        
-        var targetIsland = islands[0];
+
+        var targetIsland = islands.Count() > 0 ? islands[0] : new GameObject();
         bool foundTargets = false;
         foreach (var island in islands)
         {
@@ -207,15 +208,13 @@ public class Move : MonoBehaviour
         }
 
         HandleInput();
-        if (stage == 3)
-        {
-            // RenderSettings.skybox = (Material) Resources.Load("SkySeries Freebie/6sidedCosmicCoolCloud");
-        }
     }
 
     private void InitGame()
     {
         _oldStage = -1;
+        stage = 0;
+        hitOrb = false;
         startTime = Time.time;
         victory.enabled = false;
         jumpCount = 0;

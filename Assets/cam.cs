@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class Cam : MonoBehaviour
 {
-    public int scale = 200;
+    public const int Scale = 200;
     public GameObject island;
     public int numIslands = 100;
     public GameObject orb;
@@ -32,7 +32,7 @@ public class Cam : MonoBehaviour
     {
         for (var i = 0; i < num; i++)
         {
-            Instantiate(thing, Utils.RandomVector(scale), Quaternion.identity);
+            Instantiate(thing, Utils.RandomVector(Scale), Quaternion.identity);
         }
     }
 

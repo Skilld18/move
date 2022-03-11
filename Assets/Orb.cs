@@ -18,21 +18,21 @@ public class Orb : MonoBehaviour
         {
             case 0:
                 stage0();
-                GetComponent<MeshRenderer>().material.color = new UnityEngine.Color(255, 0, 0, 100);
+                GetComponent<MeshRenderer>().material.color = new Color(255, 0, 0, 100);
                 break;
             case 1:
                 stage1();
-                GetComponent<MeshRenderer>().material.color = new UnityEngine.Color(255, 0, 255, 100);
+                GetComponent<MeshRenderer>().material.color = new Color(255, 0, 255, 100);
                 RenderSettings.skybox = (Material) Resources.Load("SkySeries Freebie/MegaSun");
 
                 break;
             case 2:
                 stage2();
-                GetComponent<MeshRenderer>().material.color = new UnityEngine.Color(255, 255, 255, 100);
+                GetComponent<MeshRenderer>().material.color = new Color(255, 255, 255, 100);
                 RenderSettings.skybox = (Material) Resources.Load("SkySeries Freebie/PlanetaryEarth");
                 break;
         }
-        if (oob())
+        if (OutOfBounds())
         {
             transform.position = new Vector3(30, 30, 30);
         }
@@ -85,9 +85,9 @@ public class Orb : MonoBehaviour
             transform.position += randomVector;
         }
     }
-    private bool oob()
+    private bool OutOfBounds()
     {
-        var player = GameObject.FindGameObjectWithTag("Player");
+        var player = Utils.GetPlayer();
         return Vector3.Distance(player.transform.position, transform.position) > tooFar;
     }
 }
