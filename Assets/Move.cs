@@ -104,7 +104,14 @@ public class Move : MonoBehaviour
 
     private void HandleJumpInput(bool foundTargets)
     {
-        Utils.DrawLine(transform.position, TargetIsland.transform.position, Color.green);
+        if (Utils.InRange(TargetIsland))
+        {
+            Utils.DrawLine(transform.position, TargetIsland.transform.position, Color.green);
+        }
+        else
+        {
+            Utils.DrawLine(transform.position, TargetIsland.transform.position, Color.cyan);
+        }
         if (!_fireAction.triggered || !foundTargets || (!_canJump && waitTilLand.GetComponent<Toggle>().isOn))
         {
             return;
