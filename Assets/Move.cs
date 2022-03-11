@@ -11,7 +11,7 @@ public class Move : MonoBehaviour
     private GameObject lastIsland;
     public InputActionAsset input;
     private bool canJump = true;
-    public float epsilon = 10f;
+    public float epsilon = 17f;
     
     public static bool hitOrb = false;
 
@@ -28,9 +28,11 @@ public class Move : MonoBehaviour
 
     public InputActionMap gameplayActions;
     public static int jumpCount = 0;
+    private float startTime = 0f;
     
     void Start()
     {
+        startTime = Time.time;
         victory.enabled = false;
         input.Enable();
         fireAction = input.FindAction("Player/Fire");
@@ -89,7 +91,7 @@ public class Move : MonoBehaviour
         if (Move.stage == 4)
         {
             victory.enabled = true;
-            victory.text = "Victory!\nJumps: " + Move.jumpCount.ToString() + "\nTime: " + Time.time.ToString("F2") +
+            victory.text = "Victory!\nJumps: " + Move.jumpCount.ToString() + "\nTime: " + (Time.time - startTime).ToString("F2") +
                            "\nHold jump to restart";
             Move.stage++;
             return;
@@ -102,7 +104,8 @@ public class Move : MonoBehaviour
                 {
                     _oldStage = -1;
                     Move.stage = 0;
-                    Application.LoadLevel(0);
+                    RenderSettings.skybox = (Material) Resources.Load("SkySeries Freebie/6sidedFluffball");
+                    SceneManager.LoadScene(0);
                 }
             }
             else
@@ -213,8 +216,18 @@ public class Move : MonoBehaviour
             canJump = false;
             jumpCount++;
         }
-        CameraMove._currentX += lookAction.ReadValue<Vector2>().x * Time.deltaTime * 400f;
-        CameraMove._currentY += -lookAction.ReadValue<Vector2>().y * Time.deltaTime * 400f;
+
+        if (lookAction.triggered && lookAction.activeControl.ToString().Contains("Mouse/delta"))
+        {
+            CameraMove._currentX += lookAction.ReadValue<Vector2>().x * Time.deltaTime * CameraMove.sensitivity * 0.2f;
+            CameraMove._currentY += -lookAction.ReadValue<Vector2>().y * Time.deltaTime * CameraMove.sensitivity * 0.2f;
+        }
+        else
+        {
+            CameraMove._currentX += lookAction.ReadValue<Vector2>().x * Time.deltaTime * CameraMove.sensitivity;
+            CameraMove._currentY += -lookAction.ReadValue<Vector2>().y * Time.deltaTime * CameraMove.sensitivity;
+        }
+        
         if (Move.stage == 3)
         {
             RenderSettings.skybox = (Material) Resources.Load("SkySeries Freebie/6sidedCosmicCoolCloud");

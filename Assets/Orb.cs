@@ -66,7 +66,7 @@ public class Orb : MonoBehaviour
             Move.hitOrb = true;
             Destroy(this.gameObject);
         }
-        transform.position += transform.forward * maxSpeed;
+        transform.position += transform.forward * (maxSpeed * Random.value);
     }
     private void stage2()
     {

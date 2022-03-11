@@ -11,7 +11,7 @@ public class CameraMove : MonoBehaviour
     public float distance = 10.0f;
     public static float _currentX;
     public static float _currentY;
-    public float sensitivity = 400.0f;
+    public static float sensitivity = 400.0f;
 
 
     // Update is called once per frame
