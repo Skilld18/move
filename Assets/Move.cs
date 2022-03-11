@@ -94,9 +94,7 @@ public class Move : MonoBehaviour
             {
                 if (_jumpHeld + 4f < Time.time)
                 {
-                    _oldStage = -1;
-                    Move.stage = 0;
-                    RenderSettings.skybox = (Material) Resources.Load("SkySeries Freebie/6sidedFluffball");
+                    InitGame();
                     SceneManager.LoadScene(0);
                 }
             }
@@ -217,8 +215,11 @@ public class Move : MonoBehaviour
 
     private void InitGame()
     {
+        _oldStage = -1;
         startTime = Time.time;
         victory.enabled = false;
+        jumpCount = 0;
+        RenderSettings.skybox = (Material) Resources.Load("SkySeries Freebie/6sidedFluffball");
     }
 
     private void InitInput()

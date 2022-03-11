@@ -19,7 +19,6 @@ public class Orb : MonoBehaviour
             case 0:
                 stage0();
                 GetComponent<MeshRenderer>().material.color = new UnityEngine.Color(255, 0, 0, 100);
-                RenderSettings.skybox = (Material) Resources.Load("SkySeries Freebie/6sidedFluffball");
                 break;
             case 1:
                 stage1();
