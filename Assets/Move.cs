@@ -29,8 +29,8 @@ public class Move : MonoBehaviour
     public InputActionMap gameplayActions;
     public static int jumpCount = 0;
     private float startTime = 0f;
-    
-    void Start()
+
+    private void Start()
     {
         startTime = Time.time;
         victory.enabled = false;
@@ -216,6 +216,15 @@ public class Move : MonoBehaviour
             jumpCount++;
         }
 
+        handleInput();
+        if (Move.stage == 3)
+        {
+            RenderSettings.skybox = (Material) Resources.Load("SkySeries Freebie/6sidedCosmicCoolCloud");
+        }
+    }
+
+    private void handleInput()
+    {
         if (lookAction.triggered && lookAction.activeControl.ToString().Contains("Mouse/delta"))
         {
             CameraMove._currentX += lookAction.ReadValue<Vector2>().x * Time.deltaTime * CameraMove.sensitivity * 0.2f;
@@ -225,11 +234,6 @@ public class Move : MonoBehaviour
         {
             CameraMove._currentX += lookAction.ReadValue<Vector2>().x * Time.deltaTime * CameraMove.sensitivity;
             CameraMove._currentY += -lookAction.ReadValue<Vector2>().y * Time.deltaTime * CameraMove.sensitivity;
-        }
-        
-        if (Move.stage == 3)
-        {
-            RenderSettings.skybox = (Material) Resources.Load("SkySeries Freebie/6sidedCosmicCoolCloud");
         }
     }
 }
