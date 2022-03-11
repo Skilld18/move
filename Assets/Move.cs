@@ -32,15 +32,8 @@ public class Move : MonoBehaviour
 
     private void Start()
     {
-        startTime = Time.time;
-        victory.enabled = false;
-        input.Enable();
-        fireAction = input.FindAction("Player/Fire");
-        lookAction = input.FindAction("Player/Look");
-        moveAction = input.FindAction("Player/Move");
-        fireAction.Enable();
-        lookAction.Enable();
-        moveAction.Enable();
+        InitGame();
+        InitInput();
     }
 
     private void returnToIsland()
@@ -91,8 +84,7 @@ public class Move : MonoBehaviour
         if (Move.stage == 4)
         {
             victory.enabled = true;
-            victory.text = "Victory!\nJumps: " + Move.jumpCount.ToString() + "\nTime: " + (Time.time - startTime).ToString("F2") +
-                           "\nHold jump to restart";
+            victory.text = "Victory!\nJumps: " + Move.jumpCount.ToString() + "\nTime: " + (Time.time - startTime).ToString("F2") + "\nHold jump to restart";
             Move.stage++;
             return;
         }
@@ -216,24 +208,40 @@ public class Move : MonoBehaviour
             jumpCount++;
         }
 
-        handleInput();
+        HandleInput();
         if (Move.stage == 3)
         {
             RenderSettings.skybox = (Material) Resources.Load("SkySeries Freebie/6sidedCosmicCoolCloud");
         }
     }
 
-    private void handleInput()
+    private void InitGame()
     {
-        if (lookAction.triggered && lookAction.activeControl.ToString().Contains("Mouse/delta"))
+        startTime = Time.time;
+        victory.enabled = false;
+    }
+
+    private void InitInput()
+    {
+        input.Enable();
+        fireAction = input.FindAction("Player/Fire");
+        lookAction = input.FindAction("Player/Look");
+        moveAction = input.FindAction("Player/Move");
+        fireAction.Enable();
+        lookAction.Enable();
+        moveAction.Enable();
+    }
+
+    private static void HandleInput()
+    {
+        var cameraInput = lookAction.ReadValue<Vector2>() * Time.deltaTime;
+        var mouseTweak = CameraMove.Sensitivity;
+        if (lookAction.triggered &&
+            lookAction.activeControl.ToString().Contains("Mouse/delta"))
         {
-            CameraMove._currentX += lookAction.ReadValue<Vector2>().x * Time.deltaTime * CameraMove.sensitivity * 0.2f;
-            CameraMove._currentY += -lookAction.ReadValue<Vector2>().y * Time.deltaTime * CameraMove.sensitivity * 0.2f;
+            mouseTweak *= 0.1f;
         }
-        else
-        {
-            CameraMove._currentX += lookAction.ReadValue<Vector2>().x * Time.deltaTime * CameraMove.sensitivity;
-            CameraMove._currentY += -lookAction.ReadValue<Vector2>().y * Time.deltaTime * CameraMove.sensitivity;
-        }
+        CameraMove.CurrentY += -cameraInput.y * mouseTweak;
+        CameraMove.CurrentX += cameraInput.x * mouseTweak;
     }
 }

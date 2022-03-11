@@ -5,7 +5,7 @@ public class Orb : MonoBehaviour
 {
     public static float maxSpeed = 0.3f;
     public static float tooFar = 300;
-    private float scale = 20f;
+    private float scale = 200f;
     private float howLong = 3;
     private float startTime;
     private Vector3 randomVector;

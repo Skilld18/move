@@ -3,8 +3,8 @@ using UnityEngine;
 public class DoorScript : MonoBehaviour
 {
     private float waitTime = 15f;
-    private float initTime = 0f;
-    private float scale = 20f;
+    private float _initTime = 0f;
+    private float scale = 200f;
 
     void Update()
     {
@@ -21,11 +21,11 @@ public class DoorScript : MonoBehaviour
             }
         }
 
-        if (Time.time - initTime > waitTime && Move.stage < 4)
+        if (Time.time - _initTime > waitTime && Move.stage < 4)
         {
             var randomVector = new Vector3(Random.value, Random.value, Random.value) * scale;
             transform.position = randomVector;
-            initTime = Time.time;
+            _initTime = Time.time;
         }
     }
 }

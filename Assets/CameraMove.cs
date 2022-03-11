@@ -1,29 +1,20 @@
-using System;
 using UnityEngine;
 
 public class CameraMove : MonoBehaviour
 {
- 
-    private const float YMin = -50.0f;
-    private const float YMax = 50.0f;
- 
     public Transform lookAt;
- 
     public float distance = 10.0f;
-    public static float _currentX;
-    public static float _currentY;
-    public static float sensitivity = 400.0f;
-
+    public static float CurrentX;
+    public static float CurrentY;
+    public const float Sensitivity = 400.0f;
 
     private void LateUpdate()
     {
-        _currentY = Mathf.Clamp(_currentY, YMin, YMax);
- 
+        CurrentY = Mathf.Clamp(CurrentY, -50f, 50f);
         var direction = new Vector3(0, 0, -distance);
-        var rotation = Quaternion.Euler(_currentY, _currentX, 0);
+        var rotation = Quaternion.Euler(CurrentY, CurrentX, 0);
         var position = lookAt.position;
         transform.position = position + rotation * direction;
- 
         transform.LookAt(position);
     }
 }
