@@ -158,11 +158,11 @@ public class Move : MonoBehaviour
                 continue;
             }
 
-            if (!Utils.canCameraSee(island) && !zenMode.GetComponent<Toggle>().isOn)
+            if (!Utils.CanCameraSee(island) && !zenMode.GetComponent<Toggle>().isOn)
             {
                 continue;
             }
-            if (Utils.inRange(island))
+            if (Utils.InRange(island))
             {
                 foundTargets = true;
                 if (Vector3.Angle(dir, controls) < angle)
@@ -187,11 +187,10 @@ public class Move : MonoBehaviour
             }
             if (island != targetIsland)
             {
-                if (Utils.inRange(island) && island != targetIsland)
+                if (Utils.InRange(island) && island != targetIsland)
                 {
-                    if (Utils.canCameraSee(island))
+                    if (Utils.CanCameraSee(island))
                     {
-                        island.GetComponent<Renderer>().material.color = Color.yellow;
                         Utils.DrawLine(local.position, island.transform.position, Color.yellow);
                     }
                     else

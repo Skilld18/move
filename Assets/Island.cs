@@ -2,11 +2,6 @@ using UnityEngine;
 
 public class Island : MonoBehaviour
 {
-    void Start()
-    {
-    }
-
-    // Update is called once per frame
     private void Update()
     {
         var player = GameObject.FindGameObjectWithTag("Player");
@@ -14,6 +9,10 @@ public class Island : MonoBehaviour
         if (dist > Move.Range)
         {
             GetComponent<Renderer>().material.color = Color.black;
+        }
+        else
+        {
+            GetComponent<Renderer>().material.color = Color.yellow;
         }
     }
 }

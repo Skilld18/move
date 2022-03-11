@@ -2,10 +2,9 @@ using UnityEngine;
 
 public class Cam : MonoBehaviour
 {
+    public static int Scale = 200;
     public GameObject island;
-    // Start is called before the first frame update
     public int numIslands = 100;
-    public static int scale = 200;
     public GameObject orb;
     public int numOrbs;
     private void Start()
@@ -21,9 +20,9 @@ public class Cam : MonoBehaviour
         GameObject islandInstance = island;
         for (var i = 0; i < numIslands; i++)
         {
-            x = Random.value * scale;
-            y = Random.value * scale;
-            z = Random.value * scale;
+            x = Random.value * Scale;
+            y = Random.value * Scale;
+            z = Random.value * Scale;
             islandInstance = Instantiate(island, new Vector3(x, y, z), Quaternion.identity);
             
         }
@@ -34,9 +33,9 @@ public class Cam : MonoBehaviour
         
         for (var i = 0; i < numOrbs; i++)
         {
-            x = Random.value * scale;
-            y = Random.value * scale;
-            z = Random.value * scale;
+            x = Random.value * Scale;
+            y = Random.value * Scale;
+            z = Random.value * Scale;
             Instantiate(orb, new Vector3(x, y, z), Quaternion.identity);
         }
     }

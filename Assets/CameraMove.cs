@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class CameraMove : MonoBehaviour
@@ -14,13 +15,8 @@ public class CameraMove : MonoBehaviour
     public static float sensitivity = 400.0f;
 
 
-    // Update is called once per frame
     private void LateUpdate()
     {
- 
-        // _currentX += Input.GetAxis("Mouse X") * sensitivity * Time.deltaTime;
-        // _currentY += Input.GetAxis("Mouse Y") * sensitivity * Time.deltaTime;
- 
         _currentY = Mathf.Clamp(_currentY, YMin, YMax);
  
         var direction = new Vector3(0, 0, -distance);

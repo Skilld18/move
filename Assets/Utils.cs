@@ -1,17 +1,16 @@
-using Unity.VisualScripting;
 using UnityEngine;
 
-public class Utils
+public static class Utils
 {
     private static float fudge = 1.2f;
-    public static bool canCameraSee(GameObject o)
+    public static bool CanCameraSee(GameObject o)
     {
         var mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
         Plane[] planes = GeometryUtility.CalculateFrustumPlanes(mainCamera.GetComponent<Camera>());
         return GeometryUtility.TestPlanesAABB(planes, o.GetComponent<Collider>().bounds);
     }
 
-    public static bool inRange(GameObject o)
+    public static bool InRange(GameObject o)
     {
         var player = GameObject.FindGameObjectWithTag("Player");
         var dist = Vector3.Distance(player.transform.position, o.transform.position);
@@ -25,9 +24,9 @@ public class Utils
     public static void DestroyLines()
     {
         var lines = GameObject.FindGameObjectsWithTag("line");
-        for (int i = 0; i < lines.Length; i++)
+        foreach (var line in lines)
         {
-            GameObject.Destroy(lines[i]);
+            Object.Destroy(line);
         }
     }
 
@@ -59,7 +58,7 @@ public class Utils
         }
         else
         {
-            GameObject.Destroy(cyl);
+            Object.Destroy(cyl);
         }
     }
 }
