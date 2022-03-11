@@ -52,7 +52,7 @@ public class Move : MonoBehaviour
     private int _oldStage = -1;
     private void paint()
     {
-        switch (Move.stage)
+        switch (stage)
         {
             case 0:
                 GetComponent<MeshRenderer>().material.color = Color.grey;
@@ -81,14 +81,14 @@ public class Move : MonoBehaviour
     private float _jumpHeld = 0;
     private void Update()
     {
-        if (Move.stage == 4)
+        if (stage == 4)
         {
             victory.enabled = true;
             victory.text = "Victory!\nJumps: " + Move.jumpCount.ToString() + "\nTime: " + (Time.time - startTime).ToString("F2") + "\nHold jump to restart";
-            Move.stage++;
+            stage++;
             return;
         }
-        else if (Move.stage == 5)
+        else if (stage == 5)
         {
             if (fireAction.IsPressed())
             {
@@ -106,7 +106,7 @@ public class Move : MonoBehaviour
         }
         var mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
         transform.LookAt(mainCamera.transform.position);
-        var islands = GameObject.FindGameObjectsWithTag("island");
+        var islands = Utils.GetIslands(true);
         var angle = 360f;
         var local = transform;
         var right = local.right;
@@ -207,9 +207,9 @@ public class Move : MonoBehaviour
         }
 
         HandleInput();
-        if (Move.stage == 3)
+        if (stage == 3)
         {
-            RenderSettings.skybox = (Material) Resources.Load("SkySeries Freebie/6sidedCosmicCoolCloud");
+            // RenderSettings.skybox = (Material) Resources.Load("SkySeries Freebie/6sidedCosmicCoolCloud");
         }
     }
 

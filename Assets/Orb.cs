@@ -31,10 +31,6 @@ public class Orb : MonoBehaviour
                 GetComponent<MeshRenderer>().material.color = new UnityEngine.Color(255, 255, 255, 100);
                 RenderSettings.skybox = (Material) Resources.Load("SkySeries Freebie/PlanetaryEarth");
                 break;
-            case 3:
-                // stage3();
-                break;
-            
         }
         if (oob())
         {
@@ -75,7 +71,7 @@ public class Orb : MonoBehaviour
             Move.stage++;
             Move.hitOrb = true;
             Instantiate(door, Utils.RandomVector(scale), Quaternion.identity);
-            Destroy(this.gameObject);
+            Destroy(gameObject);
         }
         
         if (startTime + howLong < Time.time)

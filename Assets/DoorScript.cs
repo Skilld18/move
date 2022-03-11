@@ -2,17 +2,18 @@ using UnityEngine;
 
 public class DoorScript : MonoBehaviour
 {
-    private float waitTime = 15f;
-    private float _initTime = 0f;
-    private float scale = 200f;
+    private const float WaitTime = 15f;
+    private float _initTime;
 
-    void Update()
+    private void Start()
     {
-        if (Move.jumpTarget != this)
-        {
-            GetComponent<MeshRenderer>().material.color = Color.white;
-        }
-        var player = GameObject.FindGameObjectWithTag("Player");
+        RenderSettings.skybox = (Material) Resources.Load("SkySeries Freebie/6sidedCosmicCoolCloud");
+    }
+
+    private void Update()
+    {
+        GetComponent<MeshRenderer>().material.color = Color.white;
+        var player = Utils.GetPlayer();
         if (Vector3.Distance(transform.position, player.transform.position) < 0.1f)
         {
             if (Move.stage < 4)
@@ -20,12 +21,17 @@ public class DoorScript : MonoBehaviour
                 Move.stage++;
             }
         }
+        MoveDoor();
+    }
 
-        if (Time.time - _initTime > waitTime && Move.stage < 4)
+    private void MoveDoor()
+    {
+        if (!(Time.time - _initTime > WaitTime) || Move.stage >= 4)
         {
-            var randomVector = new Vector3(Random.value, Random.value, Random.value) * scale;
-            transform.position = randomVector;
-            _initTime = Time.time;
+            return;
         }
+        var randomVector = Utils.RandomVector(Cam.Scale);
+        transform.position = randomVector;
+        _initTime = Time.time;
     }
 }
