@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -43,7 +44,7 @@ public static class Utils
         DestroyAll(GameObject.FindGameObjectsWithTag("line"));
     }
 
-    private static void DestroyAll(GameObject[] array)
+    private static void DestroyAll(IEnumerable<GameObject> array)
     {
         array.ToList().ForEach(Object.Destroy);
     }

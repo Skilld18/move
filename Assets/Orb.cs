@@ -1,35 +1,34 @@
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 public class Orb : MonoBehaviour
 {
-    public static float maxSpeed = 0.3f;
-    public static float tooFar = 300;
-    private float scale = 200f;
-    private float howLong = 3;
-    private float startTime;
-    private Vector3 randomVector;
+    private const float MaxSpeed = 0.3f;
+    private float _howLong = 3;
+    private float _startTime;
+    private Vector3 _randomVector;
     public GameObject door;
 
-
-    void Update()
+    private readonly Color[] _colors =
     {
+        new(255, 0, 0),
+        new(255,0,255),
+        new(255,255,255)
+    };
+
+    private void Update()
+    {
+        HitOrb();
+        GetComponent<MeshRenderer>().material.color = _colors[Move.stage];
         switch (Move.stage)
         {
             case 0:
-                stage0();
-                GetComponent<MeshRenderer>().material.color = new Color(255, 0, 0, 100);
+                Stage0();
                 break;
             case 1:
-                stage1();
-                GetComponent<MeshRenderer>().material.color = new Color(255, 0, 255, 100);
-                RenderSettings.skybox = (Material) Resources.Load("SkySeries Freebie/MegaSun");
-
+                Stage1();
                 break;
             case 2:
-                stage2();
-                GetComponent<MeshRenderer>().material.color = new Color(255, 255, 255, 100);
-                RenderSettings.skybox = (Material) Resources.Load("SkySeries Freebie/PlanetaryEarth");
+                Stage2();
                 break;
         }
         if (OutOfBounds())
@@ -38,56 +37,52 @@ public class Orb : MonoBehaviour
         }
     }
 
-    private bool hitOrb()
+    private void HitOrb()
     {
         var player = GameObject.FindGameObjectWithTag("Player");
-        return Vector3.Distance(player.transform.position, transform.position) < 1f;
-    }
-
-    private void stage0()
-    {
-        if (hitOrb())
+        var hit = Vector3.Distance(player.transform.position, transform.position) < 1f;
+        if (hit)
         {
             Move.stage++;
             Move.hitOrb = true;
-            Destroy(this.gameObject);
-        }
-
-    }
-    private void stage1()
-    {
-        if (hitOrb())
-        {
-            Move.stage++;
-            Move.hitOrb = true;
-            Destroy(this.gameObject);
-        }
-        transform.position += transform.forward * (maxSpeed * Random.value);
-    }
-    private void stage2()
-    {
-        if (hitOrb())
-        {
-            Move.stage++;
-            Move.hitOrb = true;
-            Instantiate(door, Utils.RandomVector(scale), Quaternion.identity);
+            if (Move.stage == 1)
+            {
+                RenderSettings.skybox = (Material) Resources.Load("SkySeries Freebie/MegaSun");
+            }
+            if (Move.stage == 2)
+            {
+                RenderSettings.skybox = (Material) Resources.Load("SkySeries Freebie/PlanetaryEarth");
+            }
+            if (Move.stage == 3)
+            {
+                Instantiate(door, Utils.RandomVector(Cam.Scale), Quaternion.identity);
+            }
             Destroy(gameObject);
         }
-        
-        if (startTime + howLong < Time.time)
+    }
+
+    private static void Stage0() { }
+    private void Stage1()
+    {
+        var t = transform;
+        t.position += t.forward * (MaxSpeed * Random.value);
+    }
+    private void Stage2()
+    {
+        if (_startTime + _howLong < Time.time)
         {
-            startTime = Time.time;
-            howLong = Random.value * 3;
-            randomVector = new Vector3(Random.value, Random.value, Random.value) * (Random.value * maxSpeed);
+            _startTime = Time.time;
+            _howLong = Random.value * 3;
+            _randomVector = Utils.RandomVector(Random.value * MaxSpeed);
         }
         else
         {
-            transform.position += randomVector;
+            transform.position += _randomVector;
         }
     }
     private bool OutOfBounds()
     {
         var player = Utils.GetPlayer();
-        return Vector3.Distance(player.transform.position, transform.position) > tooFar;
+        return Vector3.Distance(player.transform.position, transform.position) > Cam.Scale;
     }
 }

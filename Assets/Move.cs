@@ -23,13 +23,14 @@ public class Move : MonoBehaviour
     public static int stage = 0;
     
 
+    //UI
     public Toggle zenMode;
     public Toggle waitTilLand;
     public Text victory;
-
-    public InputActionMap gameplayActions;
-    public static int jumpCount = 0;
-    private float startTime = 0f;
+    
+    //Scoring 
+    private static int _jumpCount;
+    private float _startTime;
 
     private void Start()
     {
@@ -85,7 +86,7 @@ public class Move : MonoBehaviour
         if (stage == 4)
         {
             victory.enabled = true;
-            victory.text = "Victory!\nJumps: " + Move.jumpCount.ToString() + "\nTime: " + (Time.time - startTime).ToString("F2") + "\nHold jump to restart";
+            victory.text = "Victory!\nJumps: " + Move._jumpCount.ToString() + "\nTime: " + (Time.time - _startTime).ToString("F2") + "\nHold jump to restart";
             stage++;
             return;
         }
@@ -136,7 +137,7 @@ public class Move : MonoBehaviour
             }
         }
 
-        var targetIsland = islands.Count() > 0 ? islands[0] : new GameObject();
+        var targetIsland = islands.Any() ? islands[0] : new GameObject();
         bool foundTargets = false;
         foreach (var island in islands)
         {
@@ -204,7 +205,7 @@ public class Move : MonoBehaviour
         {
             jumpTarget = targetIsland;
             canJump = false;
-            jumpCount++;
+            _jumpCount++;
         }
 
         HandleInput();
@@ -215,9 +216,9 @@ public class Move : MonoBehaviour
         _oldStage = -1;
         stage = 0;
         hitOrb = false;
-        startTime = Time.time;
+        _startTime = Time.time;
         victory.enabled = false;
-        jumpCount = 0;
+        _jumpCount = 0;
         RenderSettings.skybox = (Material) Resources.Load("SkySeries Freebie/6sidedFluffball");
     }
 
