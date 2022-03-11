@@ -4,6 +4,7 @@ public class DoorScript : MonoBehaviour
 {
     private float waitTime = 15f;
     private float initTime = 0f;
+    private float scale = 20f;
 
     void Update()
     {
@@ -22,7 +23,7 @@ public class DoorScript : MonoBehaviour
 
         if (Time.time - initTime > waitTime && Move.stage < 4)
         {
-            var randomVector = new Vector3(Random.value, Random.value, Random.value) * Cam.Scale;
+            var randomVector = new Vector3(Random.value, Random.value, Random.value) * scale;
             transform.position = randomVector;
             initTime = Time.time;
         }

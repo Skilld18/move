@@ -1,3 +1,4 @@
+using System.Linq;
 using UnityEngine;
 
 public static class Utils
@@ -21,44 +22,43 @@ public static class Utils
         return dist < Move.Range;
     }
 
-    public static void DestroyLines()
+    public static GameObject GetPlayer()
     {
-        var lines = GameObject.FindGameObjectsWithTag("line");
-        foreach (var line in lines)
-        {
-            Object.Destroy(line);
-        }
+        return GameObject.FindGameObjectWithTag("Player");
+    }
+    
+    public static GameObject[] GetIslands(bool includeObjectives)
+    {
+        return GameObject.FindGameObjectsWithTag("island").Where(x => x.name == "island(Clone)" || includeObjectives).ToArray();
     }
 
+    public static Vector3 RandomVector(float scale = 1f)
+    {
+        return new Vector3(Random.value, Random.value, Random.value) * scale;
+    }
+
+    public static void DestroyLines()
+    {
+        DestroyAll(GameObject.FindGameObjectsWithTag("line"));
+    }
+
+    private static void DestroyAll(GameObject[] array)
+    {
+        array.ToList().ForEach(Object.Destroy);
+    }
 
     public static void DrawLine(Vector3 start, Vector3 end, Color color, float duration = 0.2f)
     {
-        GameObject myLine = new GameObject();
-        myLine.transform.position = start;
-        myLine.AddComponent<LineRenderer>();
-        LineRenderer lr = myLine.GetComponent<LineRenderer>();
-        lr.endWidth = 0.01f;
-        lr.startWidth = 0.01f;
-        lr.material.color = color;
-        lr.SetPosition(0, start);
-        lr.SetPosition(1, end);
-        myLine.tag = "line";
-        
-        
-        var cyl = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        // cyl.AddComponent<MeshRenderer>();
-        cyl.GetComponent<MeshRenderer>().material.color = color;
-        cyl.transform.localEulerAngles = new Vector3(90, 0, 0);
-        cyl.transform.localScale = new Vector3(0.1f, 0.1f, Vector3.Distance(end, start));
-        cyl.transform.position = Vector3.Lerp(start, end, 0.5f);
-        cyl.tag = "line";
-        if (Vector3.Distance(end, start) > 0.1f)
+        if (end == start)
         {
-            cyl.transform.rotation = Quaternion.LookRotation(end - start);
+            return;
         }
-        else
-        {
-            Object.Destroy(cyl);
-        }
+        var line = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        line.GetComponent<MeshRenderer>().material.color = color;
+        line.transform.localEulerAngles = new Vector3(90, 0, 0);
+        line.transform.localScale = new Vector3(0.1f, 0.1f, Vector3.Distance(end, start));
+        line.transform.position = Vector3.Lerp(start, end, 0.5f);
+        line.transform.rotation = Quaternion.LookRotation(end - start);
+        line.tag = "line";
     }
 }

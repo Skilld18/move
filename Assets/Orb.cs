@@ -5,6 +5,7 @@ public class Orb : MonoBehaviour
 {
     public static float maxSpeed = 0.3f;
     public static float tooFar = 300;
+    private float scale = 20f;
     private float howLong = 3;
     private float startTime;
     private Vector3 randomVector;
@@ -74,9 +75,7 @@ public class Orb : MonoBehaviour
         {
             Move.stage++;
             Move.hitOrb = true;
-            var pos = new Vector3(Random.value * Cam.Scale, Random.value * Cam.Scale,
-                Random.value * Cam.Scale);
-            Instantiate(door, pos, Quaternion.identity);
+            Instantiate(door, Utils.RandomVector(scale), Quaternion.identity);
             Destroy(this.gameObject);
         }
         
