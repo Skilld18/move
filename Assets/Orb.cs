@@ -8,8 +8,9 @@ public class Orb : MonoBehaviour
     private Vector3 _randomVector;
     public GameObject door;
 
-    private readonly Color[] _colors =
+    public static readonly Color[] Colors =
     {
+        new(220, 220, 220),
         new(255, 0, 0),
         new(255,0,255),
         new(255,255,255)
@@ -18,7 +19,7 @@ public class Orb : MonoBehaviour
     private void Update()
     {
         HitOrb();
-        GetComponent<MeshRenderer>().material.color = _colors[Move.Stage];
+        GetComponent<MeshRenderer>().material.color = Colors[(Move.Stage + 1)%4];
         switch (Move.Stage)
         {
             case 0:

@@ -1,4 +1,4 @@
-using System.Linq;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
@@ -19,6 +19,7 @@ public class Move : MonoBehaviour
     private bool _canJump = true;
     public static bool HitOrb;
     public static GameObject JumpTarget;
+    public static GameObject TargetIsland;
     private GameObject _lastIsland;
 
     //UI
@@ -36,106 +37,42 @@ public class Move : MonoBehaviour
         InitInput();
     }
 
-    private void ReturnToIsland()
-    {
-        if (HitOrb)
-        {
-            transform.position = Vector3.MoveTowards(transform.position, _lastIsland.transform.position, 300 * Time.deltaTime);
-        }
-
-        if (_lastIsland && Vector3.Distance(_lastIsland.transform.position, transform.position) < 0.1f)
-        {
-            HitOrb = false;
-        }
-    }
-
-    private void Paint()
-    {
-        switch (Stage)
-        {
-            case 0:
-                GetComponent<MeshRenderer>().material.color = Color.grey;
-                break;
-            case 1:
-                GetComponent<MeshRenderer>().material.color = Color.red;
-                break;
-            case 2:
-                GetComponent<MeshRenderer>().material.color = new Color(255f, 0f,255f);
-                break;
-            case 3:
-                GetComponent<MeshRenderer>().material.color = Color.white;
-                break;
-        }
-
-        if (_oldStage != Stage)
-        {
-            GetComponent<AudioSource>().clip = (AudioClip) Resources.Load(Stage.ToString());
-            GetComponent<AudioSource>().loop = true;
-            GetComponent<AudioSource>().Play();
-        }
-
-        _oldStage = Stage;
-    }
-
-    private float _jumpHeld;
     private void Update()
     {
-        if (Stage == 4)
+        RestartCheck();
+        if (VictoryCheck())
         {
-            victory.enabled = true;
-            victory.text = "Victory!\nJumps: " + _jumpCount + "\nTime: " + (Time.time - _startTime).ToString("F2") + "\nHold jump to restart";
-            Stage++;
             return;
         }
-        if (Stage == 5)
-        {
-            if (_fireAction.IsPressed())
-            {
-                if (_jumpHeld + 4f < Time.time)
-                {
-                    InitGame();
-                    SceneManager.LoadScene(0);
-                }
-            }
-            else
-            {
-                _jumpHeld = Time.time;
-            }
-            
-        }
-        var mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
-        transform.LookAt(mainCamera.transform.position);
-        var islands = Utils.GetIslands(true);
-        var angle = 360f;
-        var local = transform;
-        var right = local.right;
-        var up = local.up;
-        var controls = -right * _moveAction.ReadValue<Vector2>().x + up * _moveAction.ReadValue<Vector2>().y;
 
         Utils.DestroyLines();
         ReturnToIsland();
-        Paint();
+        PaintAndMusic();
         if (HitOrb)
         {
             return;
         }
-        controls.Normalize();
-        if (JumpTarget)
-        {
-            transform.position = Vector3.MoveTowards(transform.position, JumpTarget.transform.position, Time.deltaTime * 100);
-            if (Vector3.Distance(JumpTarget.transform.position, transform.position) < 17f)
-            {
-                if (JumpTarget.name == "island(Clone)")
-                {
-                    _lastIsland = JumpTarget;
-                }
-                JumpTarget.GetComponent<Renderer> ().material.color = Color.green;
-                _canJump = true;
-            }
-        }
+        MoveTowardJumpTarget();
+        
+        var islands = Utils.GetIslands(true);
+        var foundTargets = FindJumpTargets(islands);
+        DrawLines(islands);
+        HandleJumpInput(foundTargets);
+        HandleCameraInput();
+    }
 
-        var targetIsland = islands.Any() ? islands[0] : new GameObject();
-        bool foundTargets = false;
+    private bool FindJumpTargets(IReadOnlyList<GameObject> islands)
+    {
+        var angle = 360f;
+        TargetIsland = islands[0];
+        var foundTargets = false;
+        
+        var local = transform;
+        var right = local.right;
+        var up = local.up;
+
+        var controls = -right * _moveAction.ReadValue<Vector2>().x + up * _moveAction.ReadValue<Vector2>().y;
+        controls.Normalize();
         foreach (var island in islands)
         {
             var islandTransform = island.transform;
@@ -146,66 +83,105 @@ public class Move : MonoBehaviour
             {
                 continue;
             }
-
             if (!Utils.CanCameraSee(island) && !zenMode.GetComponent<Toggle>().isOn)
             {
                 continue;
             }
-            if (Utils.InRange(island))
+            if (!Utils.InRange(island))
             {
-                foundTargets = true;
-                if (Vector3.Angle(dir, controls) < angle)
-                {
-                    angle = Vector3.Angle(dir, controls);
-                    targetIsland = island;
-                }
+                continue;
             }
+            if (!(Vector3.Angle(dir, controls) < angle))
+            {
+                continue;
+            }
+            foundTargets = true;
+            angle = Vector3.Angle(dir, controls);
+            TargetIsland = island;
         }
-        if (foundTargets)
-        {
-            Utils.DrawLine(transform.position, targetIsland.transform.position, Color.green);
-            targetIsland.GetComponent<Renderer> ().material.color = Color.green;
-        }
+        return foundTargets;
+    }
 
+    private void HandleJumpInput(bool foundTargets)
+    {
+        Utils.DrawLine(transform.position, TargetIsland.transform.position, Color.green);
+        if (!_fireAction.triggered || !foundTargets || (!_canJump && waitTilLand.GetComponent<Toggle>().isOn))
+        {
+            return;
+        }
+        JumpTarget = TargetIsland;
+        _canJump = false;
+        _jumpCount++;
+    }
+
+    private void DrawLines(IEnumerable<GameObject> islands)
+    {
+        var local = transform;
         foreach (var island in islands)
         {
-            if (island != targetIsland && (island.name == "Orb(Clone)" || (island.name == "Door(Clone)")))
+            if (island != TargetIsland && (island.name == "Orb(Clone)" || (island.name == "Door(Clone)")))
             {
                 Utils.DrawLine(local.position, island.transform.position, Color.cyan);
                 continue;
             }
-            if (island != targetIsland)
+            if (!Utils.InRange(island) || island == TargetIsland)
             {
-                if (Utils.InRange(island) && island != targetIsland)
-                {
-                    if (Utils.CanCameraSee(island))
-                    {
-                        Utils.DrawLine(local.position, island.transform.position, Color.yellow);
-                    }
-                    else
-                    {
-                        if (zenMode.GetComponent<Toggle>().isOn)
-                        {
-                            Utils.DrawLine(local.position, island.transform.position, Color.red);
-                        }
-                    }
-                }
-                else
-                {
-                    island.GetComponent<Renderer>().material.color = Color.black;
-                }
+                continue;
+            }
+            if (Utils.CanCameraSee(island))
+            {
+                Utils.DrawLine(local.position, island.transform.position, Color.yellow);
+            }
+            else if (zenMode.GetComponent<Toggle>().isOn)
+            {
+                Utils.DrawLine(local.position, island.transform.position, Color.red);
             }
         }
+    }
 
-        
-        if (_fireAction.triggered && foundTargets && (_canJump || !waitTilLand.GetComponent<Toggle>().isOn))
+    private void MoveTowardJumpTarget()
+    {
+        if (!JumpTarget)
         {
-            JumpTarget = targetIsland;
-            _canJump = false;
-            _jumpCount++;
+            return;
         }
+        transform.position = Vector3.MoveTowards(transform.position, JumpTarget.transform.position, Time.deltaTime * 100);
+        if (!(Vector3.Distance(JumpTarget.transform.position, transform.position) < 17f))
+        {
+            return;
+        }
+        if (JumpTarget.name == "island(Clone)")
+        {
+            _lastIsland = JumpTarget;
+        }
+        _canJump = true;
+    }
+    private bool VictoryCheck()
+    {
+        if (Stage != 4)
+        {
+            return false;
+        }
+        victory.enabled = true;
+        victory.text = "Victory!\nJumps: " + _jumpCount + "\nTime: " + (Time.time - _startTime).ToString("F2") + "\nHold jump to restart";
+        Stage++;
+        return true;
+    }
 
-        HandleCameraInput();
+    private float _jumpHeld;
+    private void RestartCheck()
+    {
+        if (Stage != 5) return;
+        if (_fireAction.IsPressed())
+        {
+            if (!(_jumpHeld + 4f < Time.time)) return;
+            InitGame();
+            SceneManager.LoadScene(0);
+        }
+        else
+        {
+            _jumpHeld = Time.time;
+        }
     }
 
     private void InitGame()
@@ -229,9 +205,36 @@ public class Move : MonoBehaviour
         _lookAction.Enable();
         _moveAction.Enable();
     }
-
-    private static void HandleCameraInput()
+    
+    private void ReturnToIsland()
     {
+        if (HitOrb)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, _lastIsland.transform.position, 300 * Time.deltaTime);
+        }
+
+        if (_lastIsland && Vector3.Distance(_lastIsland.transform.position, transform.position) < 0.1f)
+        {
+            HitOrb = false;
+        }
+    }
+
+    private void PaintAndMusic()
+    {
+        GetComponent<MeshRenderer>().material.color = Orb.Colors[Stage%4];
+        if (_oldStage != Stage)
+        {
+            GetComponent<AudioSource>().clip = (AudioClip) Resources.Load(Stage.ToString());
+            GetComponent<AudioSource>().loop = true;
+            GetComponent<AudioSource>().Play();
+        }
+        _oldStage = Stage;
+    }
+
+    private void HandleCameraInput()
+    {
+        var mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
+        transform.LookAt(mainCamera.transform.position);
         var cameraInput = _lookAction.ReadValue<Vector2>() * Time.deltaTime;
         var mouseTweak = CameraMove.Sensitivity;
         if (_lookAction.triggered &&

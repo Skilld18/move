@@ -40,6 +40,6 @@ public class Cam : MonoBehaviour
     {
         var origin = Utils.GetIslands(false)[0];
         Utils.GetPlayer().transform.position = origin.transform.position;
-        Move.jumpTarget = origin;
+        Move.JumpTarget = origin;
     }
 }
