@@ -6,22 +6,20 @@ using UnityEngine.UI;
 
 public class Move : MonoBehaviour
 {
+    //Controls
+    public InputActionAsset input;
+    private static InputAction _fireAction;
+    private static InputAction _lookAction;
+    private static InputAction _moveAction;
     public const int Range = 70;
 
-    public static GameObject jumpTarget;
-    private GameObject lastIsland;
-    public InputActionAsset input;
-    private bool canJump = true;
-    public float epsilon = 17f;
-    
-    public static bool hitOrb = false;
-
-    public static InputAction fireAction;
-    public static InputAction lookAction;
-    public static InputAction moveAction;
-
-    public static int stage = 0;
-    
+    //State control    
+    public static int Stage;
+    private int _oldStage = -1;
+    private bool _canJump = true;
+    public static bool HitOrb;
+    public static GameObject JumpTarget;
+    private GameObject _lastIsland;
 
     //UI
     public Toggle zenMode;
@@ -38,23 +36,22 @@ public class Move : MonoBehaviour
         InitInput();
     }
 
-    private void returnToIsland()
+    private void ReturnToIsland()
     {
-        if (hitOrb)
+        if (HitOrb)
         {
-            transform.position = Vector3.MoveTowards(transform.position, lastIsland.transform.position, 300 * Time.deltaTime);
+            transform.position = Vector3.MoveTowards(transform.position, _lastIsland.transform.position, 300 * Time.deltaTime);
         }
 
-        if (lastIsland && Vector3.Distance(lastIsland.transform.position, transform.position) < 0.1f)
+        if (_lastIsland && Vector3.Distance(_lastIsland.transform.position, transform.position) < 0.1f)
         {
-            hitOrb = false;
+            HitOrb = false;
         }
     }
 
-    private int _oldStage = -1;
-    private void paint()
+    private void Paint()
     {
-        switch (stage)
+        switch (Stage)
         {
             case 0:
                 GetComponent<MeshRenderer>().material.color = Color.grey;
@@ -70,29 +67,29 @@ public class Move : MonoBehaviour
                 break;
         }
 
-        if (_oldStage != Move.stage)
+        if (_oldStage != Stage)
         {
-            GetComponent<AudioSource>().clip = (AudioClip) Resources.Load(stage.ToString());
+            GetComponent<AudioSource>().clip = (AudioClip) Resources.Load(Stage.ToString());
             GetComponent<AudioSource>().loop = true;
             GetComponent<AudioSource>().Play();
         }
 
-        _oldStage = Move.stage;
+        _oldStage = Stage;
     }
 
-    private float _jumpHeld = 0;
+    private float _jumpHeld;
     private void Update()
     {
-        if (stage == 4)
+        if (Stage == 4)
         {
             victory.enabled = true;
-            victory.text = "Victory!\nJumps: " + Move._jumpCount.ToString() + "\nTime: " + (Time.time - _startTime).ToString("F2") + "\nHold jump to restart";
-            stage++;
+            victory.text = "Victory!\nJumps: " + _jumpCount + "\nTime: " + (Time.time - _startTime).ToString("F2") + "\nHold jump to restart";
+            Stage++;
             return;
         }
-        else if (stage == 5)
+        if (Stage == 5)
         {
-            if (fireAction.IsPressed())
+            if (_fireAction.IsPressed())
             {
                 if (_jumpHeld + 4f < Time.time)
                 {
@@ -113,27 +110,27 @@ public class Move : MonoBehaviour
         var local = transform;
         var right = local.right;
         var up = local.up;
-        var controls = -right * moveAction.ReadValue<Vector2>().x + up * moveAction.ReadValue<Vector2>().y;
+        var controls = -right * _moveAction.ReadValue<Vector2>().x + up * _moveAction.ReadValue<Vector2>().y;
 
         Utils.DestroyLines();
-        returnToIsland();
-        paint();
-        if (hitOrb)
+        ReturnToIsland();
+        Paint();
+        if (HitOrb)
         {
             return;
         }
         controls.Normalize();
-        if (jumpTarget)
+        if (JumpTarget)
         {
-            transform.position = Vector3.MoveTowards(transform.position, jumpTarget.transform.position, Time.deltaTime * 100);
-            if (Vector3.Distance(jumpTarget.transform.position, transform.position) < epsilon)
+            transform.position = Vector3.MoveTowards(transform.position, JumpTarget.transform.position, Time.deltaTime * 100);
+            if (Vector3.Distance(JumpTarget.transform.position, transform.position) < 17f)
             {
-                if (jumpTarget.name == "island(Clone)")
+                if (JumpTarget.name == "island(Clone)")
                 {
-                    lastIsland = jumpTarget;
+                    _lastIsland = JumpTarget;
                 }
-                jumpTarget.GetComponent<Renderer> ().material.color = Color.green;
-                canJump = true;
+                JumpTarget.GetComponent<Renderer> ().material.color = Color.green;
+                _canJump = true;
             }
         }
 
@@ -145,7 +142,7 @@ public class Move : MonoBehaviour
             var dir = islandTransform.position - local.position;
             dir = Vector3.ProjectOnPlane(dir, local.forward);
             dir.Normalize();
-            if (island == jumpTarget)
+            if (island == JumpTarget)
             {
                 continue;
             }
@@ -201,21 +198,21 @@ public class Move : MonoBehaviour
         }
 
         
-        if (fireAction.triggered && foundTargets && (canJump || !waitTilLand.GetComponent<Toggle>().isOn))
+        if (_fireAction.triggered && foundTargets && (_canJump || !waitTilLand.GetComponent<Toggle>().isOn))
         {
-            jumpTarget = targetIsland;
-            canJump = false;
+            JumpTarget = targetIsland;
+            _canJump = false;
             _jumpCount++;
         }
 
-        HandleInput();
+        HandleCameraInput();
     }
 
     private void InitGame()
     {
         _oldStage = -1;
-        stage = 0;
-        hitOrb = false;
+        Stage = 0;
+        HitOrb = false;
         _startTime = Time.time;
         victory.enabled = false;
         _jumpCount = 0;
@@ -225,20 +222,20 @@ public class Move : MonoBehaviour
     private void InitInput()
     {
         input.Enable();
-        fireAction = input.FindAction("Player/Fire");
-        lookAction = input.FindAction("Player/Look");
-        moveAction = input.FindAction("Player/Move");
-        fireAction.Enable();
-        lookAction.Enable();
-        moveAction.Enable();
+        _fireAction = input.FindAction("Player/Fire");
+        _lookAction = input.FindAction("Player/Look");
+        _moveAction = input.FindAction("Player/Move");
+        _fireAction.Enable();
+        _lookAction.Enable();
+        _moveAction.Enable();
     }
 
-    private static void HandleInput()
+    private static void HandleCameraInput()
     {
-        var cameraInput = lookAction.ReadValue<Vector2>() * Time.deltaTime;
+        var cameraInput = _lookAction.ReadValue<Vector2>() * Time.deltaTime;
         var mouseTweak = CameraMove.Sensitivity;
-        if (lookAction.triggered &&
-            lookAction.activeControl.ToString().Contains("Mouse/delta"))
+        if (_lookAction.triggered &&
+            _lookAction.activeControl.ToString().Contains("Mouse/delta"))
         {
             mouseTweak *= 0.1f;
         }

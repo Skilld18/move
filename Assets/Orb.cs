@@ -18,8 +18,8 @@ public class Orb : MonoBehaviour
     private void Update()
     {
         HitOrb();
-        GetComponent<MeshRenderer>().material.color = _colors[Move.stage];
-        switch (Move.stage)
+        GetComponent<MeshRenderer>().material.color = _colors[Move.Stage];
+        switch (Move.Stage)
         {
             case 0:
                 Stage0();
@@ -43,17 +43,17 @@ public class Orb : MonoBehaviour
         var hit = Vector3.Distance(player.transform.position, transform.position) < 1f;
         if (hit)
         {
-            Move.stage++;
-            Move.hitOrb = true;
-            if (Move.stage == 1)
+            Move.Stage++;
+            Move.HitOrb = true;
+            if (Move.Stage == 1)
             {
                 RenderSettings.skybox = (Material) Resources.Load("SkySeries Freebie/MegaSun");
             }
-            if (Move.stage == 2)
+            if (Move.Stage == 2)
             {
                 RenderSettings.skybox = (Material) Resources.Load("SkySeries Freebie/PlanetaryEarth");
             }
-            if (Move.stage == 3)
+            if (Move.Stage == 3)
             {
                 Instantiate(door, Utils.RandomVector(Cam.Scale), Quaternion.identity);
             }

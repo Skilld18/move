@@ -16,9 +16,9 @@ public class DoorScript : MonoBehaviour
         var player = Utils.GetPlayer();
         if (Vector3.Distance(transform.position, player.transform.position) < 0.1f)
         {
-            if (Move.stage < 4)
+            if (Move.Stage < 4)
             {
-                Move.stage++;
+                Move.Stage++;
             }
         }
         MoveDoor();
@@ -26,7 +26,7 @@ public class DoorScript : MonoBehaviour
 
     private void MoveDoor()
     {
-        if (!(Time.time - _initTime > WaitTime) || Move.stage >= 4)
+        if (!(Time.time - _initTime > WaitTime) || Move.Stage >= 4)
         {
             return;
         }
